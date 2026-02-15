@@ -7,7 +7,7 @@ A cyberpunk-styled prediction market dashboard that pulls live data from Polymar
 ## Features
 
 - 📊 **Live Polymarket Data** - Top 10 active markets by 24h volume
-- 🤖 **AI-Powered Analysis** - GLM-5 generates "Featured Signal" and "Wildcard" predictions
+- 🤖 **AI-Powered Analysis** - Google Gemini generates "Featured Signal" and "Wildcard" predictions
 - 📱 **Mobile Responsive** - Looks great on desktop, tablet, and mobile
 - ⚡ **Auto-Updates** - Regenerates every 6 hours via GitHub Actions
 - 🎨 **Cyberpunk UI** - Cyber green/pink aesthetic with smooth animations
@@ -16,8 +16,8 @@ A cyberpunk-styled prediction market dashboard that pulls live data from Polymar
 ## Quick Start
 
 ```bash
-# Set your GLM-5 API key (Z.ai)
-export ZAI_API_KEY="your-api-key-here"
+# Set your Google API key
+export GOOGLE_API_KEY="your-api-key-here"
 
 # Generate fresh almanac
 python3 generate_almanac.py
@@ -30,8 +30,8 @@ python3 generate_almanac.py
 ## Requirements
 
 - **Python 3.6+**
-- **ZAI_API_KEY** environment variable (for GLM-5 analysis)
-  - Get it from [https://open.bigmodel.cn/](https://open.bigmodel.cn/)
+- **GOOGLE_API_KEY** environment variable (for Gemini analysis)
+  - Get it from [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey)
   - Without it, the script runs in fallback mode (no AI analysis)
 - Internet connection (fetches from Polymarket API)
 
@@ -47,11 +47,11 @@ python3 generate_almanac.py
    cd oracle-almanac
    ```
 
-2. **Add ZAI_API_KEY to GitHub Secrets**
+2. **Add GOOGLE_API_KEY to GitHub Secrets**
    - Go to your repo → Settings → Secrets and variables → Actions
    - Click "New repository secret"
-   - Name: `ZAI_API_KEY`
-   - Value: Your GLM-5 API key from Z.ai
+   - Name: `GOOGLE_API_KEY`
+   - Value: Your Google API key from AI Studio
 
 3. **Enable GitHub Pages**
    - Go to Settings → Pages
@@ -93,7 +93,7 @@ Each run:
 ## How It Works
 
 1. **Fetch Markets** - Pulls top 10 active markets by 24h volume from Polymarket API
-2. **AI Analysis** - Sends top 3 markets to GLM-5 for cynical, cyberpunk-styled analysis
+2. **AI Analysis** - Sends top 3 markets to Google Gemini for cynical, cyberpunk-styled analysis
    - "Reality Check" - What's actually happening (2-3 sentences)
    - "Oracle's Take" - Prediction/insight (1-2 sentences)
 3. **Generate HTML** - Creates a static page with:
@@ -143,13 +143,13 @@ python3 generate_almanac.py && open index.html
 ### No AI Analysis (Fallback Mode)
 
 If you see "The Oracle's vision is clouded" messages:
-1. Check `ZAI_API_KEY` is set: `echo $ZAI_API_KEY`
-2. Verify API key is valid at [https://open.bigmodel.cn/](https://open.bigmodel.cn/)
-3. Check API quota/limits
+1. Check `GOOGLE_API_KEY` is set: `echo $GOOGLE_API_KEY`
+2. Verify API key is valid at [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+3. Check API quota/limits (Gemini has generous free tier)
 
 ### GitHub Action Fails
 
-1. Verify `ZAI_API_KEY` secret is set in repo settings
+1. Verify `GOOGLE_API_KEY` secret is set in repo settings
 2. Check Actions tab for error logs
 3. Ensure Pages is enabled and set to "GitHub Actions" source
 

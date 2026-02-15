@@ -28,7 +28,7 @@ jobs:
     
     - name: Generate fresh almanac
       env:
-        ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
       run: |
         python3 generate_almanac.py
         echo "✅ Almanac generated at $(date)"

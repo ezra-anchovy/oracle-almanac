@@ -8,17 +8,17 @@ import sys
 # Configuration
 OUTPUT_FILE = "index.html"
 POLYMARKET_API_URL = "https://gamma-api.polymarket.com/markets?limit=10&active=true&closed=false&order=volume24hr&ascending=false"
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+GLM5_API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 
 
 def generate_market_analysis(market_data):
     """
-    Generate 2-3 sentence analysis for top 3 markets using Gemini API.
+    Generate 2-3 sentence analysis for top 3 markets using GLM-5 API.
     Returns a list of dicts with 'question', 'probability', 'volume', 'analysis', 'oracle_take'.
     """
-    api_key = os.environ.get("GOOGLE_API_KEY")
+    api_key = os.environ.get("ZAI_API_KEY")
     if not api_key:
-        print("⚠️ GOOGLE_API_KEY not set, using fallback analysis")
+        print("⚠️ ZAI_API_KEY not set, using fallback analysis")
         return None
     
     analyses = []
@@ -48,20 +48,27 @@ Keep it punchy and cyberpunk. No fluff. Format as JSON:
 
         try:
             request_data = {
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {"temperature": 0.8, "maxOutputTokens": 300}
+                "model": "glm-5",
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.8,
+                "max_tokens": 300
             }
             
             req = urllib.request.Request(
-                f"{GEMINI_API_URL}?key={api_key}",
+                GLM5_API_URL,
                 data=json.dumps(request_data).encode('utf-8'),
-                headers={'Content-Type': 'application/json'},
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {api_key}'
+                },
                 method='POST'
             )
             
             with urllib.request.urlopen(req, timeout=30) as response:
                 result = json.load(response)
-                text = result['candidates'][0]['content']['parts'][0]['text']
+                text = result['choices'][0]['message']['content']
                 # Extract JSON from response (handle markdown code blocks)
                 if '```json' in text:
                     text = text.split('```json')[1].split('```')[0]
@@ -365,6 +372,66 @@ def generate_html(markets, analyses=None):
             border-top: 1px solid var(--border);
         }}
 
+        /* Mobile Responsive */
+        @media (max-width: 768px) {{
+            body {{
+                padding: 10px;
+            }}
+
+            h1 {{
+                font-size: 2rem;
+                letter-spacing: 2px;
+            }}
+
+            .meta {{
+                font-size: 0.7rem;
+                letter-spacing: 1px;
+            }}
+
+            .grid {{
+                grid-template-columns: 1fr;
+                padding: 10px;
+                gap: 15px;
+            }}
+
+            .card {{
+                padding: 15px;
+            }}
+
+            h2 {{
+                font-size: 1rem;
+            }}
+
+            .probability {{
+                font-size: 2rem;
+            }}
+
+            .ticker {{
+                animation: ticker 20s linear infinite;
+            }}
+
+            .stat-row {{
+                flex-direction: column;
+                gap: 5px;
+            }}
+        }}
+
+        @media (max-width: 480px) {{
+            h1 {{
+                font-size: 1.5rem;
+                letter-spacing: 1px;
+            }}
+
+            .probability {{
+                font-size: 1.5rem;
+            }}
+
+            .insight {{
+                padding: 10px;
+                font-size: 0.9rem;
+            }}
+        }}
+
     </style>
 </head>
 <body>
@@ -437,7 +504,7 @@ def main():
         
     print(f"📊 Fetched {len(markets)} active markets.")
     
-    print("🤖 Consulting Gemini for market analysis...")
+    print("🤖 Consulting GLM-5 for market analysis...")
     analyses = generate_market_analysis(markets)
     if analyses:
         print(f"✓ Generated {len(analyses)} market analyses")

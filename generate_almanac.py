@@ -8,7 +8,8 @@ import sys
 # Configuration
 OUTPUT_FILE = "index.html"
 POLYMARKET_API_URL = "https://gamma-api.polymarket.com/markets?limit=10&active=true&closed=false&order=volume24hr&ascending=false"
-GLM5_API_URL = "https://api.z.ai/api/coding/paas/v4/chat/completions"
+# Use the correct Z.ai API endpoint (OpenAI-compatible)
+GLM5_API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 
 
 def generate_market_analysis(market_data):
@@ -48,7 +49,7 @@ Keep it punchy and cyberpunk. No fluff. Format as JSON:
 
         try:
             request_data = {
-                "model": "glm-5",
+                "model": "glm-4",  # Use glm-4 instead of glm-5
                 "messages": [
                     {"role": "user", "content": prompt}
                 ],
@@ -61,13 +62,14 @@ Keep it punchy and cyberpunk. No fluff. Format as JSON:
                 data=json.dumps(request_data).encode('utf-8'),
                 headers={
                     'Content-Type': 'application/json',
-                    'Authorization': f'Bearer {api_key}'
+                    'Authorization': f'{api_key}'  # ZhipuAI uses direct API key, not Bearer
                 },
                 method='POST'
             )
             
             with urllib.request.urlopen(req, timeout=30) as response:
-                result = json.load(response)
+                response_text = response.read().decode('utf-8')
+                result = json.loads(response_text)
                 text = result['choices'][0]['message']['content']
                 # Extract JSON from response (handle markdown code blocks)
                 if '```json' in text:
@@ -87,6 +89,9 @@ Keep it punchy and cyberpunk. No fluff. Format as JSON:
                 
         except Exception as e:
             print(f"  ⚠️ Failed to analyze '{question[:40]}...': {e}")
+            # Log more details for debugging
+            import traceback
+            traceback.print_exc()
             analyses.append({
                 'question': question,
                 'probability': probability,

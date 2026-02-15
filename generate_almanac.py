@@ -8,7 +8,7 @@ import sys
 # Configuration
 OUTPUT_FILE = "index.html"
 POLYMARKET_API_URL = "https://gamma-api.polymarket.com/markets?limit=10&active=true&closed=false&order=volume24hr&ascending=false"
-GLM5_API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+GLM5_API_URL = "https://api.z.ai/api/coding/paas/v4/chat/completions"
 
 
 def generate_market_analysis(market_data):
